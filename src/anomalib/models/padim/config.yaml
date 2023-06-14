@@ -1,8 +1,8 @@
 dataset:
-  name: mvtec
+  name: ORG
   format: mvtec
-  path: ./datasets/MVTec
-  category: bottle
+  path: ./datasets/어노멀테스트_ORG
+  category: disk
   task: segmentation
   train_batch_size: 32
   eval_batch_size: 32
