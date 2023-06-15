@@ -1,44 +1,43 @@
 dataset:
-  name: mvtec
-  format: mvtec
-  path: ./datasets/MVTec
+  name: org
+  format: folder
+  path: ./datasets/어노멀테스트_ORG
+  normal_dir: ok
+  abnormal_dir: ng
   task: segmentation
-  category: bottle
+  mask_dir: null #optional
+  normal_test_dir: null # optional
+  extensions: null
+  split_ratio: 0.2  # normal images ratio to create a test split
+  seed: 0
+  image_size: 256
   train_batch_size: 32
   eval_batch_size: 32
   num_workers: 8
-  image_size: 256 # dimensions to which images are resized (mandatory) options: [256, 256, 448, 384]
-  center_crop: null # dimensions to which images are center-cropped after resizing (optional)
-  normalization: imagenet # data distribution to which the images will be normalized: [none, imagenet]
-  transform_config:
-    train: null
-    eval: null
-  test_split_mode: from_dir # options: [from_dir, synthetic]
-  test_split_ratio: 0.2 # fraction of train images held out testing (usage depends on test_split_mode)
-  val_split_mode: same_as_test # options: [same_as_test, from_test, synthetic]
+  normalization: imagenet # data distribution to which the images will be normalized
+  test_split_mode: from_dir # options [from_dir, synthetic]
   val_split_ratio: 0.5 # fraction of train/test images held out for validation (usage depends on val_split_mode)
+  transform_config:
+      train: null
+      eval: null
+  val_split_mode: from_test # determines how the validation set is created, options [same_as_test, from_test]
   tiling:
-    apply: false
-    tile_size: null
-    stride: null
-    remove_border_count: 0
-    use_random_tiling: False
-    random_tile_count: 16
+      apply: false
+      tile_size: null
+      stride: null
+      remove_border_count: 0
+      use_random_tiling: False
+      random_tile_count: 16
 
 model:
-  name: fastflow
-  backbone: resnet18 # options: [resnet18, wide_resnet50_2, cait_m48_448, deit_base_distilled_patch16_384]
+  name: padim
+  backbone: resnet18
   pre_trained: true
-  flow_steps: 8 # options: [8, 8, 20, 20] - for each supported backbone
-  hidden_ratio: 1.0 # options: [1.0, 1.0, 0.16, 0.16] - for each supported backbone
-  conv3x3_only: True # options: [True, False, False, False] - for each supported backbone
-  lr: 0.001
-  weight_decay: 0.00001
-  early_stopping:
-    patience: 3
-    metric: pixel_AUROC
-    mode: max
-  normalization_method: min_max # options: [null, min_max, cdf]
+  layers:
+    - layer1
+    - layer2
+    - layer3
+  normalization_method: min_max # options: [none, min_max, cdf]
 
 metrics:
   image:
@@ -84,7 +83,7 @@ trainer:
   check_val_every_n_epoch: 1 # Don't validate before extracting features.
   fast_dev_run: false
   accumulate_grad_batches: 1
-  max_epochs: 500
+  max_epochs: 1
   min_epochs: null
   max_steps: -1
   min_steps: null
