@@ -1,30 +1,33 @@
 dataset:
-  name: mvtec
-  format: mvtec
-  path: ./datasets/MVTec
-  category: bottle
-  task: segmentation
+  name: org
+  format: folder
+  path: C:/Users/LEE CHANG YOUNG/Documents/GitHub/anomalib/datasets/ORG
+  normal_dir: ok
+  abnormal_dir: ng
+  task: classification
+  mask_dir: null #optional
+  normal_test_dir: null # optional
+  extensions: null
+  split_ratio: 0.2  # normal images ratio to create a test split
+  seed: 0
+  image_size: 256
   train_batch_size: 32
   eval_batch_size: 32
-  inference_batch_size: 32
   num_workers: 8
-  image_size: 256 # dimensions to which images are resized (mandatory)
-  center_crop: null # dimensions to which images are center-cropped after resizing (optional)
-  normalization: imagenet # data distribution to which the images will be normalized: [none, imagenet]
-  transform_config:
-    train: null
-    eval: null
-  test_split_mode: from_dir # options: [from_dir, synthetic]
-  test_split_ratio: 0.2 # fraction of train images held out testing (usage depends on test_split_mode)
-  val_split_mode: same_as_test # options: [same_as_test, from_test, synthetic]
+  normalization: imagenet # data distribution to which the images will be normalized
+  test_split_mode: from_dir # options [from_dir, synthetic]
   val_split_ratio: 0.5 # fraction of train/test images held out for validation (usage depends on val_split_mode)
+  transform_config:
+      train: null
+      eval: null
+  val_split_mode: from_test # determines how the validation set is created, options [same_as_test, from_test]
   tiling:
-    apply: false
-    tile_size: null
-    stride: null
-    remove_border_count: 0
-    use_random_tiling: False
-    random_tile_count: 16
+      apply: false
+      tile_size: null
+      stride: null
+      remove_border_count: 0
+      use_random_tiling: False
+      random_tile_count: 16
 
 model:
   name: stfpm
@@ -38,7 +41,7 @@ model:
   weight_decay: 0.0001
   early_stopping:
     patience: 5
-    metric: pixel_AUROC
+    metric: train_loss
     mode: max
   normalization_method: min_max # options: [null, min_max, cdf]
 
