@@ -13,6 +13,7 @@ import warnings
 from argparse import ArgumentParser, Namespace
 
 from pytorch_lightning import Trainer, seed_everything
+from pytorch_lightning.loggers import WandbLogger
 
 from anomalib.config import get_configurable_parameters
 from anomalib.data import get_datamodule
@@ -31,7 +32,7 @@ def get_parser() -> ArgumentParser:
         ArgumentParser: The parser object.
     """
     parser = ArgumentParser()
-    parser.add_argument("--model", type=str, default="rkde", help="Name of the algorithm to train/test")
+    parser.add_argument("--model", type=str, default="padim", help="Name of the algorithm to train/test")
     parser.add_argument("--config", type=str, required=False, help="Path to a model config file")
     parser.add_argument("--log-level", type=str, default="INFO", help="<DEBUG, INFO, WARNING, ERROR>")
 
@@ -58,6 +59,9 @@ def train(args: Namespace):
     model = get_model(config)
     experiment_logger = get_experiment_logger(config)
     callbacks = get_callbacks(config)
+    
+    wandb_logger = WandbLogger(name="anomal", project="anomal")
+    experiment_logger.append(wandb_logger)
 
     trainer = Trainer(**config.trainer, logger=experiment_logger, callbacks=callbacks)
     logger.info("Training the model.")
