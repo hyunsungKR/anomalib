@@ -35,6 +35,11 @@ def get_parser() -> ArgumentParser:
     parser.add_argument("--model", type=str, default="padim", help="Name of the algorithm to train/test")
     parser.add_argument("--config", type=str, required=False, help="Path to a model config file")
     parser.add_argument("--log-level", type=str, default="INFO", help="<DEBUG, INFO, WARNING, ERROR>")
+    parser.add_argument(
+        "overrides",
+        nargs="*",
+        help="Any key=value arguments to override config values (use dots for.nested=overrides)",
+    )
 
     return parser
 
@@ -51,7 +56,7 @@ def train(args: Namespace):
     if args.log_level == "ERROR":
         warnings.filterwarnings("ignore")
 
-    config = get_configurable_parameters(model_name=args.model, config_path=args.config)
+    config = get_configurable_parameters(model_name=args.model, config_path=args.config, overrides=args.overrides)
     if config.project.get("seed") is not None:
         seed_everything(config.project.seed)
 
